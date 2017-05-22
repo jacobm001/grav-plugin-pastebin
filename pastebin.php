@@ -1,6 +1,8 @@
 <?php
 namespace Grav\Plugin;
 
+use \PDO;
+
 use Grav\Common\Page\Page;
 use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
@@ -12,6 +14,8 @@ use RocketTheme\Toolbox\Event\Event;
  */
 class PastebinPlugin extends Plugin
 {
+    protected $db;
+
     /**
      * @return array
      *
@@ -28,7 +32,6 @@ class PastebinPlugin extends Plugin
             'onPluginsInitialized' => ['onPluginsInitialized', 0],
             'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
             'onFormProcessed'      => ['onFormProcessed', 0],
-            'onPageInitialized'    => ['onPageInitialized', 0],
             'onTask.pastebin.new'  => ['newPaste', 0]
         ];
     }
@@ -39,25 +42,49 @@ class PastebinPlugin extends Plugin
     public function onPluginsInitialized()
     {
         // Don't proceed if we are in the admin plugin
-        if ($this->isAdmin()) {
+        if($this->isAdmin()) {
             return;
+        }
+
+        if(!$this->check_for_db()) {
+            $this->build_new_db();
         }
 
         $uri = $this->grav['uri'];
 
         if ( $uri->path() == $this->config->get('plugins.pastebin.route_new') ) {
-            $this->grav['debugger']->addMessage('Building NewPaste page.');
-
             $this->enable([
                 'onPagesInitialized' => ['addNewPastePage', 0],
+                'onPageInitialized'    => ['onPageInitialized', 0],
             ]);
-
             return;
         }
+    }
 
-        // $this->enable([
-        //     'onPageContentRaw' => ['onPageContentRaw', 0]
-        // ]);
+    public function check_for_db()
+    {
+        if(!file_exists(DATA_DIR . "/pastebin.db"))
+            return false;
+
+        try {
+            $this->db = new PDO('sqlite:' . DATA_DIR . 'pastebin.db');
+        } catch(Exception $e) {
+            $this->grav['debugger']->addMessage($e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function build_new_db()
+    {
+        $this->grav['debugger']->addMessage('Pastebin database not found. Building a new one...');
+        
+        $this->db = new PDO('sqlite:' . DATA_DIR . 'pastebin.db');
+        $query = $this->db->prepare(file_get_contents(__DIR__ . "/build_db.sql"));
+        $query->execute();
+
+        return;
     }
 
     public function onPageInitialized()
@@ -108,5 +135,8 @@ class PastebinPlugin extends Plugin
     public function newPaste() 
     {
         $this->grav['debugger']->addMessage('In New Paste controller');
+        $this->grav['debugger']->addMessage($_POST);
+
+        $this->grav->redirect('/', 302);
     }
 }
