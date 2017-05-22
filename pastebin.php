@@ -27,7 +27,9 @@ class PastebinPlugin extends Plugin
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 0],
             'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
-            'onFormProcessed'      => ['onFormProcessed', 0]
+            'onFormProcessed'      => ['onFormProcessed', 0],
+            'onPageInitialized'    => ['onPageInitialized', 0],
+            'onTask.pastebin.new'  => ['newPaste', 0]
         ];
     }
 
@@ -58,6 +60,23 @@ class PastebinPlugin extends Plugin
         // ]);
     }
 
+    public function onPageInitialized()
+    {
+        $page = $this->grav['page'];
+
+        if(!$page) {
+            return;
+        }
+
+        // page merging should be done here
+
+        $page = new Page;
+        $page->init(new \SplFileInfo(__DIR__ . "/pages/new_paste.md"));
+        $page->slug(basename($this->grav['uri']->path()));
+        unset($this->grav['page']);
+        $this->grav['page'] = $page;
+    }
+
     public function onTwigTemplatePaths()
     {
         $twig = $this->grav['twig'];
@@ -78,13 +97,16 @@ class PastebinPlugin extends Plugin
             $page->slug(basename($route));
 
             $pages->addPage($page, $route);
-            unset($this->grav['page']);
-            $this->grav['page'] = $page;
         }
     }
 
     public function onFormProcessed(Event $event)
     {
         $this->grav['debugger']->addMessage('Processing form!');
+    }
+
+    public function newPaste() 
+    {
+        $this->grav['debugger']->addMessage('In New Paste controller');
     }
 }
