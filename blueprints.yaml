@@ -33,3 +33,7 @@ form:
       type: text
       label: Route - View Paste
       default: /pastebin/view
+    route_list:
+      type: text
+      label: Route - View Pastes
+      default: /pastebin
