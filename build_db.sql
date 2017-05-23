@@ -13,6 +13,6 @@ create table views (
   , ip4 text
   , ip6 text
   , viewed timestamp default current_timestamp
-  , paste_id integer
-  , foreign key(paste_id) references pastes(paste_id)
+  , uuid text
+  , foreign key(uuid) references pastes(uuid)
 );

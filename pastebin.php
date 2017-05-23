@@ -127,7 +127,9 @@ class PastebinPlugin extends Plugin
 
         $len = strlen($this->config->get('plugins.pastebin.route_view'));
         if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
-            $this->getPaste(substr($uri->path(), $len+1));
+            $uuid = substr($uri->path(), $len+1);
+            $this->getPaste($uuid);
+            $this->recordPasteView($uuid);
             $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
         }
         
@@ -227,13 +229,22 @@ class PastebinPlugin extends Plugin
         
         $ret = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $this->grav['debugger']->addMessage($ret);
         $this->grav['twig']->twig_vars['paste'] = $ret;
+    }
+
+    public function recordPasteView($uuid)
+    {
+        $query = "insert into views(ip, uuid) values(?,?)";
+        $stmt  = $this->db->prepare($query);
+
+        $stmt->bindParam(1, $_SERVER['REMOTE_ADDR']);
+        $stmt->bindParam(2, $uuid);
+        $stmt->execute();
     }
 
     public function onFormProcessed(Event $event)
     {
-        $this->grav['debugger']->addMessage('Processing form!');
+        $this->grav['debugger']->addMessage('Processing form!');        
     }
 
     public function newPaste() 
