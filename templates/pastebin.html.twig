@@ -2,7 +2,6 @@
 
 
 {% block content %}
-    <h1>HELLO, ERRORS</h1>
 <table>
     <thead>
         <tr>
@@ -12,14 +11,13 @@
         </tr>
     </thead>    
     <tbody>
-        {{ dump("hello, world") }}
         {% for paste in pastes %}
-            {{ dump(paste) }}
-            {{ dump("looping") }}
             <tr>
-                <td>{{ paste.title }}</td>
+                <td>
+                    <a href="{{ config.plugins.pastebin.route_view ~ "/" ~ paste.uuid }}">{{ paste.title }}</a>
+                </td>
                 <td>{{ paste.author }}</td>
-                <td>{{ paste.date }}</td>
+                <td>{{ paste.created }}</td>
             </tr>
         {% endfor %}
     </tbody>

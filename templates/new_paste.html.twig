@@ -2,12 +2,6 @@
 
 {% block content %}
     <form method="post" action="{{ base_url_relative ~ uri.path }}">
-            {# {% if grav.twig.plugins_hooked_loginPage %}
-                {% for label in grav.twig.plugins_hooked_loginPage %}
-                    {% include label %}
-                {% endfor %}
-            {% endif %} #}
-
             {% for field in form.fields %}
                 {% if field.type %}
                     <div>
