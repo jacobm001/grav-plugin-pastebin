@@ -1,9 +1,9 @@
 create table pastes (
   paste_id integer primary key autoincrement
   , title text
-  , author text
-  , lang text
-  , created datetime
+  , author text default 'anonymous'
+  , lang text default 'txt'
+  , created timestamp default current_timestamp
   , raw text
 );
 
@@ -11,7 +11,7 @@ create table views (
   view_id integer primary key autoincrement
   , ip4 text
   , ip6 text
-  , viewed datetime
+  , viewed timestamp default current_timestamp
   , paste_id
   foreign key(paste_id) references pastes(paste_id)
 );
