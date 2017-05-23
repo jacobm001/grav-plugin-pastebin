@@ -137,6 +137,14 @@ class PastebinPlugin extends Plugin
         $this->grav['debugger']->addMessage('In New Paste controller');
         $this->grav['debugger']->addMessage($_POST);
 
+        $query = "insert into pastes(title, author, raw) values(?,?,?)";
+        $stmt  = $this->db->prepare($query);
+
+        $stmt->bindParam(1, $_POST['title']);
+        $stmt->bindParam(2, $_POST['author']);
+        $stmt->bindParam(3, $_POST['raw']);
+        $stmt->execute();
+
         $this->grav->redirect('/', 302);
     }
 }
