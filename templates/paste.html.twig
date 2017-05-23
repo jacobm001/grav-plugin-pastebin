@@ -1,0 +1,10 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+<h3>{{ paste.title }}</h3>
+<h4>Author: {{ paste.author }}</h4>
+<h4>Created: {{ paste.created }}</h4>
+<h4>Language: {{ paste.lang }}</h4>
+
+<pre><code>{{ paste.raw }}</code></pre>
+{% endblock %}

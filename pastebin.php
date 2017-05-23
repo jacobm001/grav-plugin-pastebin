@@ -67,6 +67,15 @@ class PastebinPlugin extends Plugin
             ]);
             return;
         }
+
+        $len = strlen($this->config->get('plugins.pastebin.route_view'));
+        if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
+            $this->enable([
+                'onPagesInitialized' => ['addPasteViewPage', 0],
+                'onPageInitialized'  => ['onPageInitialized', 0]
+            ]);
+            return;
+        }
     }
 
     public function check_for_db()
@@ -115,6 +124,12 @@ class PastebinPlugin extends Plugin
             $this->getPastes();
             $page->init(new \SplFileInfo(__DIR__ . "/pages/pastebin.md"));
         }
+
+        $len = strlen($this->config->get('plugins.pastebin.route_view'));
+        if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
+            $this->getPaste(substr($uri->path(), $len+1));
+            $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
+        }
         
         $page->slug(basename($uri->path()));
         unset($this->grav['page']);
@@ -138,6 +153,23 @@ class PastebinPlugin extends Plugin
         if (!$page) {
             $page = new Page;
             $page->init(new \SplFileInfo(__DIR__ . "/pages/pastebin.md"));
+            $page->slug(basename($route));
+
+            $pages->addPage($page, $route);
+        }
+    }
+
+    public function addPasteViewPage()
+    {
+        $this->grav['debugger']->addMessage('Building paste view page');
+
+        $route = $this->config->get('plugins.pastebin.route_view');
+        $pages = $this->grav['pages'];
+        $page  = $pages->dispatch($route);
+
+        if (!$page) {
+            $page = new Page;
+            $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
             $page->slug(basename($route));
 
             $pages->addPage($page, $route);
@@ -183,6 +215,22 @@ class PastebinPlugin extends Plugin
         $this->grav['debugger']->addMessage('Finished getting pastes');
     }
 
+    public function getPaste($paste_uuid)
+    {
+        $this->grav['debugger']->addMessage('Getting paste: ' . $paste_uuid);
+
+        $query = "select uuid, title, created, author, lang, raw from pastes where uuid = ?;";
+        $stmt  = $this->db->prepare($query);
+
+        $stmt->bindParam(1, $paste_uuid);
+        $stmt->execute();
+        
+        $ret = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->grav['debugger']->addMessage($ret);
+        $this->grav['twig']->twig_vars['paste'] = $ret;
+    }
+
     public function onFormProcessed(Event $event)
     {
         $this->grav['debugger']->addMessage('Processing form!');
@@ -190,16 +238,18 @@ class PastebinPlugin extends Plugin
 
     public function newPaste() 
     {
-        $query = "insert into pastes(uuid, title, author, raw) values(?,?,?,?)";
+        $this->grav['debugger']->addMessage($_POST);
+        $query = "insert into pastes(uuid, title, author, lang, raw) values(?,?,?,?,?)";
         $stmt  = $this->db->prepare($query);
         $uuid  = uniqid();
 
         $stmt->bindParam(1, $uuid);
         $stmt->bindParam(2, $_POST['title']);
         $stmt->bindParam(3, $_POST['author']);
-        $stmt->bindParam(4, $_POST['raw']);
+        $stmt->bindParam(4, $_POST['lang']);
+        $stmt->bindParam(5, $_POST['raw']);
         $stmt->execute();
 
-        $this->grav->redirect('/pastebin/view/' . $uuid, 302);
+        // $this->grav->redirect('/pastebin/view/' . $uuid, 302);
     }
 }

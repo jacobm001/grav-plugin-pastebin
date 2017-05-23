@@ -16,11 +16,11 @@ form:
       type: text
       id: author
       default: anonymous
-    - name: language
+    - name: lang
       type: text
       id: lang
       default: txt
-    - name: Paste Body
+    - name: raw
       type: textarea
       id: raw
       rows: 25
