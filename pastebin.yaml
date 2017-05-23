@@ -1,3 +1,4 @@
 enabled: true
+route_list: /pastebin
 route_new: /pastebin/new
 route_view: /pastebin/view
