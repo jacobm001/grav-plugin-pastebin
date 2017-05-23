@@ -1,6 +1,5 @@
 ---
 title: New Paste
-# template: default
 
 form:
   name: pastebin-new
