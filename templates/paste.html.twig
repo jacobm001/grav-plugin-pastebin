@@ -2,8 +2,8 @@
 
 {% block content %}
 <h4>{{ paste.title }}</h4>
-<h6>Created by <i>{{ paste.author }}</i> on <i>{{ paste.created }}</i></h6>
+<h6>Created by <i>{{ paste.author }}</i> on <i>{{ paste.created|date("M d, Y") }}</i></h6>
 <h6>Language: {{ paste.lang }}</h6>
 
-<pre><code>{{ paste.raw }}</code></pre>
+<pre><code class="language-{{paste.lang}}">{{ paste.raw }}</code></pre>
 {% endblock %}

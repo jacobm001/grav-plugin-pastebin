@@ -176,6 +176,11 @@ class PastebinPlugin extends Plugin
 
             $pages->addPage($page, $route);
         }
+
+        $assets      = $this->grav['assets'];
+        $prism_stuff = ['plugin://pastebin/js/prism.js', 'plugin://pastebin/css/prism.css'];
+        $assets->registerCollection('prism', $prism_stuff);
+        $assets->add('prism', 100);
     }
 
     public function addNewPastePage() 
@@ -261,6 +266,6 @@ class PastebinPlugin extends Plugin
         $stmt->bindParam(5, $_POST['raw']);
         $stmt->execute();
 
-        // $this->grav->redirect('/pastebin/view/' . $uuid, 302);
+        $this->grav->redirect('/pastebin/view/' . $uuid, 302);
     }
 }
