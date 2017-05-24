@@ -5,5 +5,5 @@
 <h6>Created by <i>{{ paste.author }}</i> on <i>{{ paste.created|date("M d, Y") }}</i></h6>
 <h6>Language: {{ paste.lang }}</h6>
 
-<pre><code class="language-{{paste.lang}}">{{ paste.raw }}</code></pre>
+<pre><code class="language-{{paste.lang}} line-numbers">{{ paste.raw }}</code></pre>
 {% endblock %}
