@@ -10,8 +10,7 @@ create table pastes (
 
 create table views (
   view_id integer primary key autoincrement
-  , ip4 text
-  , ip6 text
+  , ip text
   , viewed timestamp default current_timestamp
   , uuid text
   , foreign key(uuid) references pastes(uuid)
