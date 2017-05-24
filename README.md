@@ -34,6 +34,9 @@ Here is the default configuration and an explanation of available options:
 
 ```yaml
 enabled: true
+route_list: /pastebin       # route of the pastebin listing
+route_new: /pastebin/new    # route to create a new paste
+route_view: /pastebin/view  # rotue to view a paste
 ```
 
 ## Usage
