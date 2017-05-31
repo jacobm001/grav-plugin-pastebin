@@ -2,9 +2,9 @@
 
 
 {% block content %}
-<button
-    onclick="location.href='{{ config.plugins.pastebin.route_new }}';"
->New Paste</button>
+
+{% include 'partials/new_paste_button.html.twig' %}
+
 <table>
     <thead>
         <tr>
