@@ -20,7 +20,7 @@
                     <a href="{{ config.plugins.pastebin.route_view ~ "/" ~ paste.uuid }}">{{ paste.title }}</a>
                 </td>
                 <td>{{ paste.author }}</td>
-                <td>{{ paste.created }}</td>
+                <td>{{ paste.created|date("M d, Y - h:m A") }}</td>
             </tr>
         {% endfor %}
     </tbody>
