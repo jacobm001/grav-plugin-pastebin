@@ -11,6 +11,7 @@
             <th data-field="paste_title">Title</th>
             <th data-field="paste_author">Author</th>
             <th data-field="paste_created">Created</th>
+            <th data-field="paste_views">Times Viewed</th>
         </tr>
     </thead>    
     <tbody>
@@ -21,6 +22,7 @@
                 </td>
                 <td>{{ paste.author }}</td>
                 <td>{{ paste.created|date("M d, Y - h:m A") }}</td>
+                <td>{{ paste.views }}</td>
             </tr>
         {% endfor %}
     </tbody>

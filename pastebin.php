@@ -205,7 +205,7 @@ class PastebinPlugin extends Plugin
         $this->grav['debugger']->addMessage('Getting pastes');
 
         $ret   = array();
-        $query = "select uuid, title, author, lang, created, raw from pastes order by created desc";
+        $query = "select pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw, count(*) as views from pastes join views on pastes.uuid = views.uuid group by pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw order by pastes.created desc";
 
         foreach( $this->db->query($query) as $row ) {
             $ret[] = array(
@@ -215,6 +215,7 @@ class PastebinPlugin extends Plugin
                 , 'lang'    => $row[3]
                 , 'created' => $row[4]
                 , 'raw'     => $row[5]
+                , 'views'   => $row[6]
             );
         }
 
@@ -226,7 +227,7 @@ class PastebinPlugin extends Plugin
     {
         $this->grav['debugger']->addMessage('Getting paste: ' . $paste_uuid);
 
-        $query = "select uuid, title, created, author, lang, raw from pastes where uuid = ?;";
+        $query = "select uuid, title, created, author, lang, raw, (select count(*) from views where views.uuid = pastes.uuid) as views from pastes where uuid = ?;";
         $stmt  = $this->db->prepare($query);
 
         $stmt->bindParam(1, $paste_uuid);

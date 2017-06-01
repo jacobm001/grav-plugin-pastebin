@@ -1,9 +1,17 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block content %}
+
+{% if paste.views > 1 or paste.views == 0 %}
+	{% set t = "times" %}
+{% else %}
+	{% set t = "time" %}
+{% endif %}
+
 <h4>{{ paste.title }}</h4>
 <h6>Created by <i>{{ paste.author }}</i> on <i>{{ paste.created|date("M d, Y") }}</i></h6>
 <h6>Language: {{ paste.lang }}</h6>
+<h6>Viewed: <i>{{ paste.views }}</i> {{ t }}</h6>
 
 <pre><code class="language-{{paste.lang}} line-numbers">{{ paste.raw }}</code></pre>
 {% endblock %}
