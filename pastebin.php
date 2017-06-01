@@ -207,17 +207,10 @@ class PastebinPlugin extends Plugin
         $ret   = array();
         $query = "select pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw, count(*) as views from pastes join views on pastes.uuid = views.uuid group by pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw order by pastes.created desc";
 
-        foreach( $this->db->query($query) as $row ) {
-            $ret[] = array(
-                'uuid'      => $row[0]
-                , 'title'   => $row[1]
-                , 'author'  => $row[2]
-                , 'lang'    => $row[3]
-                , 'created' => $row[4]
-                , 'raw'     => $row[5]
-                , 'views'   => $row[6]
-            );
-        }
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+
+        $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $this->grav['twig']->twig_vars['pastes'] = $ret;
         $this->grav['debugger']->addMessage('Finished getting pastes');
@@ -233,7 +226,7 @@ class PastebinPlugin extends Plugin
         $stmt->bindParam(1, $paste_uuid);
         $stmt->execute();
         
-        $ret = $stmt->fetch(PDO::FETCH_ASSOC);
+        $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $this->grav['twig']->twig_vars['paste'] = $ret;
     }
