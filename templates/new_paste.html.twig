@@ -10,9 +10,7 @@
                 {% endif %}
             {% endfor %}
 
-        <div class="form-actions secondary-accent">
-            <button type="submit" class="button primary" name="task" value="pastebin.new">Submit</button>
-        </div>
+        {% include 'partials/pastebin/submit_button.html.twig' %}
 
         {{ nonce_field('pastebin-new-form', 'pastebin-new-form-nonce')|raw }}
     </form>
