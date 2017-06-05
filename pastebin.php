@@ -226,7 +226,7 @@ class PastebinPlugin extends Plugin
         $stmt->bindParam(1, $paste_uuid);
         $stmt->execute();
         
-        $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ret = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->grav['twig']->twig_vars['paste'] = $ret;
     }
