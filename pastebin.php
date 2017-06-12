@@ -5,6 +5,8 @@ use \PDO;
 
 use Grav\Common\Page\Page;
 use Grav\Common\Page\Pages;
+// use Grav\Common\User\User;
+use Grav\Plugin\Login\Login;
 use Grav\Common\Plugin;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -29,7 +31,7 @@ class PastebinPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'onPluginsInitialized' => ['onPluginsInitialized', 1],
             'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
             'onFormProcessed'      => ['onFormProcessed', 0],
             'onTask.pastebin.new'  => ['newPaste', 0]
@@ -54,16 +56,16 @@ class PastebinPlugin extends Plugin
 
         if ( $uri->path() == $this->config->get('plugins.pastebin.route_new') ) {
             $this->enable([
-                'onPagesInitialized' => ['addNewPastePage', 0],
-                'onPageInitialized'    => ['onPageInitialized', 0]
+                'onPagesInitialized' => ['addNewPastePage', 1],
+                'onPageInitialized'    => ['onPageInitialized', 1]
             ]);
             return;
         }
 
         if ( $uri->path() == $this->config->get('plugins.pastebin.route_list') ) {
             $this->enable([
-                'onPagesInitialized' => ['addPasteListPage', 0],
-                'onPageInitialized'    => ['onPageInitialized', 0]
+                'onPagesInitialized' => ['addPasteListPage', 1],
+                'onPageInitialized'    => ['onPageInitialized', 1]
             ]);
             return;
         }
@@ -71,8 +73,8 @@ class PastebinPlugin extends Plugin
         $len = strlen($this->config->get('plugins.pastebin.route_view'));
         if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
             $this->enable([
-                'onPagesInitialized' => ['addPasteViewPage', 0],
-                'onPageInitialized'  => ['onPageInitialized', 0]
+                'onPagesInitialized' => ['addPasteViewPage', 1],
+                'onPageInitialized'  => ['onPageInitialized', 1]
             ]);
             return;
         }
