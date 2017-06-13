@@ -33,7 +33,6 @@ class PastebinPlugin extends Plugin
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 1],
             'onTwigTemplatePaths'  => ['onTwigTemplatePaths', 0],
-            'onFormProcessed'      => ['onFormProcessed', 0],
             'onTask.pastebin.new'  => ['newPaste', 0]
         ];
     }
@@ -177,12 +176,7 @@ class PastebinPlugin extends Plugin
         $stmt->bindParam(2, $uuid);
         $stmt->execute();
     }
-
-    public function onFormProcessed(Event $event)
-    {
-        $this->grav['debugger']->addMessage('Processing form!');        
-    }
-
+    
     public function newPaste() 
     {
         $this->grav['debugger']->addMessage($_POST);
