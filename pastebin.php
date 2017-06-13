@@ -53,31 +53,19 @@ class PastebinPlugin extends Plugin
         }
 
         $uri = $this->grav['uri'];
-
-        if ( $uri->path() == $this->config->get('plugins.pastebin.route_new') ) {
-            $this->enable([
-                'onPagesInitialized' => ['addNewPastePage', 1],
-                'onPageInitialized'    => ['onPageInitialized', 1]
-            ]);
-            return;
-        }
-
-        if ( $uri->path() == $this->config->get('plugins.pastebin.route_list') ) {
-            $this->enable([
-                'onPagesInitialized' => ['addPasteListPage', 1],
-                'onPageInitialized'    => ['onPageInitialized', 1]
-            ]);
-            return;
-        }
-
         $len = strlen($this->config->get('plugins.pastebin.route_view'));
-        if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
+
+        if ( 
+            $uri->path() == $this->config->get('plugins.pastebin.route_new') 
+            or $uri->path() == $this->config->get('plugins.pastebin.route_list')
+            or substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')
+        ) {
             $this->enable([
-                'onPagesInitialized' => ['addPasteViewPage', 1],
-                'onPageInitialized'  => ['onPageInitialized', 1]
+                'onPageInitialized'    => ['onPageInitialized', 1]
             ]);
-            return;
         }
+
+        return;
     }
 
     public function check_for_db()
@@ -118,21 +106,24 @@ class PastebinPlugin extends Plugin
         // page merging should be done here
 
         $page = new Page;
+        $len  = strlen($this->config->get('plugins.pastebin.route_view'));
 
         if( $uri->path() == $this->config->get('plugins.pastebin.route_new') ) {
             $page->init(new \SplFileInfo(__DIR__ . "/pages/new_paste.md"));
         }
-        if ( $uri->path() == $this->config->get('plugins.pastebin.route_list') ) {
-            $this->getPastes();
+
+        else if ( $uri->path() == $this->config->get('plugins.pastebin.route_list') ) {
             $page->init(new \SplFileInfo(__DIR__ . "/pages/pastebin.md"));
+            
+            $this->getPastes();
         }
 
-        $len = strlen($this->config->get('plugins.pastebin.route_view'));
-        if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')) {
+        else if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view') ) {
+            $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
+            
             $uuid = substr($uri->path(), $len+1);
             $this->getPaste($uuid);
             $this->recordPasteView($uuid);
-            $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
         }
         
         $page->slug(basename($uri->path()));
@@ -144,62 +135,6 @@ class PastebinPlugin extends Plugin
     {
         $twig = $this->grav['twig'];
         $twig->twig_paths[] = __DIR__ . '/templates';
-    }
-
-    public function addPasteListPage()
-    {
-        $this->grav['debugger']->addMessage('Building paste listing page');
-
-        $route = $this->config->get('plugins.pastebin.route_list');
-        $pages = $this->grav['pages'];
-        $page  = $pages->dispatch($route);
-
-        if (!$page) {
-            $page = new Page;
-            $page->init(new \SplFileInfo(__DIR__ . "/pages/pastebin.md"));
-            $page->slug(basename($route));
-
-            $pages->addPage($page, $route);
-        }
-    }
-
-    public function addPasteViewPage()
-    {
-        $this->grav['debugger']->addMessage('Building paste view page');
-
-        $route = $this->config->get('plugins.pastebin.route_view');
-        $pages = $this->grav['pages'];
-        $page  = $pages->dispatch($route);
-
-        if (!$page) {
-            $page = new Page;
-            $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
-            $page->slug(basename($route));
-
-            $pages->addPage($page, $route);
-        }
-
-        $assets      = $this->grav['assets'];
-        $prism_stuff = ['plugin://pastebin/js/prism.js', 'plugin://pastebin/css/prism.css'];
-        $assets->registerCollection('prism', $prism_stuff);
-        $assets->add('prism', 100);
-    }
-
-    public function addNewPastePage() 
-    {
-        $this->grav['debugger']->addMessage('Building new paste page');
-
-        $route = $this->config->get('plugins.pastebin.route_new');
-        $pages = $this->grav['pages'];
-        $page = $pages->dispatch($route);
-
-        if (!$page) {
-            $page = new Page;
-            $page->init(new \SplFileInfo(__DIR__ . "/pages/new_paste.md"));
-            $page->slug(basename($route));
-
-            $pages->addPage($page, $route);
-        }
     }
 
     public function getPastes()
