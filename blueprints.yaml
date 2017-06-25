@@ -1,7 +1,7 @@
 name: Pastebin
 version: 0.1.0
 description: A simple pastebin
-icon: plug
+icon: file-text
 author:
   name: Jacob Mastel
   email: jacob@mastel.org
