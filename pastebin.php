@@ -47,10 +47,6 @@ class PastebinPlugin extends Plugin
             return;
         }
 
-        if(!$this->check_for_db()) {
-            $this->build_new_db();
-        }
-
         $uri = $this->grav['uri'];
         $len = strlen($this->config->get('plugins.pastebin.route_view'));
 
@@ -60,8 +56,12 @@ class PastebinPlugin extends Plugin
             or substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')
         ) {
             $this->enable([
-                'onPageInitialized'    => ['onPageInitialized', 1]
+                'onPageInitialized' => ['onPageInitialized', 1]
             ]);
+
+            if(!$this->check_for_db()) {
+                $this->build_new_db();
+            }
         }
 
         return;
