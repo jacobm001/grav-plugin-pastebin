@@ -130,8 +130,8 @@ class PastebinPlugin extends Plugin
             $assets->add('prism', 100);
             
             $uuid = substr($uri->path(), $len+1);
-            $this->getPaste($uuid);
             $this->recordPasteView($uuid);
+            $this->getPaste($uuid);
         }
         
         $page->slug(basename($uri->path()));
