@@ -121,7 +121,11 @@ class PastebinPlugin extends Plugin
             $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
 
             $assets      = $this->grav['assets'];
-            $prism_stuff = ['plugin://pastebin/js/prism.js', 'plugin://pastebin/css/prism.css'];
+            $prism_stuff = [
+                'plugin://pastebin/js/prism.js'
+                , 'plugin://pastebin/css/prism.css'
+            ];
+            
             $assets->registerCollection('prism', $prism_stuff);
             $assets->add('prism', 100);
             
