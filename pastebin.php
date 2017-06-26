@@ -119,6 +119,11 @@ class PastebinPlugin extends Plugin
 
         else if( substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view') ) {
             $page->init(new \SplFileInfo(__DIR__ . "/pages/paste.md"));
+
+            $assets      = $this->grav['assets'];
+            $prism_stuff = ['plugin://pastebin/js/prism.js', 'plugin://pastebin/css/prism.css'];
+            $assets->registerCollection('prism', $prism_stuff);
+            $assets->add('prism', 100);
             
             $uuid = substr($uri->path(), $len+1);
             $this->getPaste($uuid);
