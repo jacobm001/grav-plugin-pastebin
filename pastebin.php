@@ -2,6 +2,7 @@
 namespace Grav\Plugin;
 
 use \PDO;
+use \DirectoryIterator;
 
 use Grav\Common\Page\Page;
 use Grav\Common\Page\Pages;
@@ -59,9 +60,12 @@ class PastebinPlugin extends Plugin
                 'onPageInitialized' => ['onPageInitialized', 1]
             ]);
 
+            $this->get_queries();
+            
             if(!$this->check_for_db()) {
                 $this->build_new_db();
-            }
+            };
+
         }
 
         return;
@@ -91,6 +95,21 @@ class PastebinPlugin extends Plugin
         // $query->execute();
 
         return;
+    }
+
+    public function get_queries()
+    {
+        $dir = new DirectoryIterator(__DIR__ . "/queries");
+        $this->queries = [];
+
+        foreach($dir as $fileinfo) {
+            if(!$fileinfo->isDir()) {
+                $name = $fileinfo->getBasename('.sql');
+                $text = file_get_contents($fileinfo->getPathName());
+
+                $this->queries[$name] = $text;
+            }
+        }
     }
 
     public function onPageInitialized()
