@@ -61,20 +61,20 @@ class PastebinPlugin extends Plugin
             ]);
 
             $this->get_queries();
-            
-            if(!$this->check_for_db()) {
-                $this->build_new_db();
-            };
-
+            $this->init_db();
         }
 
         return;
     }
 
-    public function check_for_db()
+    public function init_db()
     {
-        if(!file_exists(DATA_DIR . "/pastebin.db"))
-            return false;
+        if(!file_exists(DATA_DIR . "/pastebin.db")) {
+            $this->grav['debugger']->addMessage('Pastebin database not found. Building a new one...');
+
+            $this->db = new PDO('sqlite:' . DATA_DIR . 'pastebin.db');
+            $this->db->exec($this->queries['build_db']);
+        }
 
         try {
             $this->db = new PDO('sqlite:' . DATA_DIR . 'pastebin.db');
@@ -84,17 +84,6 @@ class PastebinPlugin extends Plugin
         }
 
         return true;
-    }
-
-    public function build_new_db()
-    {
-        $this->grav['debugger']->addMessage('Pastebin database not found. Building a new one...');
-        
-        $this->db = new PDO('sqlite:' . DATA_DIR . 'pastebin.db');
-        $query = $this->db->exec(file_get_contents(__DIR__ . "/build_db.sql"));
-        // $query->execute();
-
-        return;
     }
 
     public function get_queries()
