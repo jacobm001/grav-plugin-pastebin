@@ -157,10 +157,8 @@ class PastebinPlugin extends Plugin
     {
         $this->grav['debugger']->addMessage('Getting pastes');
 
-        $ret   = array();
-        $query = "select pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw, count(*) as views from pastes join views on pastes.uuid = views.uuid group by pastes.uuid, pastes.title, pastes.author, pastes.lang, pastes.created, pastes.raw order by pastes.created desc";
-
-        $stmt = $this->db->prepare($query);
+        $ret  = array();
+        $stmt = $this->db->prepare($this->queries['get_pastes']);
         $stmt->execute();
 
         $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -173,8 +171,7 @@ class PastebinPlugin extends Plugin
     {
         $this->grav['debugger']->addMessage('Getting paste: ' . $paste_uuid);
 
-        $query = "select uuid, title, created, author, lang, raw, (select count(*) from views where views.uuid = pastes.uuid) as views from pastes where uuid = ?;";
-        $stmt  = $this->db->prepare($query);
+        $stmt = $this->db->prepare($this->queries['get_paste']);
 
         $stmt->bindParam(1, $paste_uuid);
         $stmt->execute();
@@ -186,8 +183,7 @@ class PastebinPlugin extends Plugin
 
     public function recordPasteView($uuid)
     {
-        $query = "insert into views(ip, uuid) values(?,?)";
-        $stmt  = $this->db->prepare($query);
+        $stmt = $this->db->prepare($this->queries['record_view']);
 
         $stmt->bindParam(1, $_SERVER['REMOTE_ADDR']);
         $stmt->bindParam(2, $uuid);
@@ -197,9 +193,9 @@ class PastebinPlugin extends Plugin
     public function newPaste() 
     {
         $this->grav['debugger']->addMessage($_POST);
-        $query = "insert into pastes(uuid, title, author, lang, raw) values(?,?,?,?,?)";
-        $stmt  = $this->db->prepare($query);
-        $uuid  = uniqid();
+        
+        $stmt = $this->db->prepare($this->queries['new_paste']);
+        $uuid = uniqid();
 
         $stmt->bindParam(1, $uuid);
         $stmt->bindParam(2, $_POST['title']);
