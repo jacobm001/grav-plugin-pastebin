@@ -204,6 +204,7 @@ class PastebinPlugin extends Plugin
         $stmt->bindParam(5, $_POST['raw']);
         $stmt->execute();
 
-        $this->grav->redirect('/pastebin/view/' . $uuid, 302);
+        $redirect_route = $this->config->get('plugins.pastebin.route_view') . '/' . $uuid;
+        $this->grav->redirect($redirect_route, 302);
     }
 }
