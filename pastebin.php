@@ -52,8 +52,8 @@ class PastebinPlugin extends Plugin
         $len = strlen($this->config->get('plugins.pastebin.route_view'));
 
         if ( 
-            $uri->path() == $this->config->get('plugins.pastebin.route_new') 
-            or $uri->path() == $this->config->get('plugins.pastebin.route_list')
+            $uri->path()                     == $this->config->get('plugins.pastebin.route_new') 
+            or $uri->path()                  == $this->config->get('plugins.pastebin.route_list')
             or substr($uri->path(), 0, $len) == $this->config->get('plugins.pastebin.route_view')
         ) {
             $this->enable([
